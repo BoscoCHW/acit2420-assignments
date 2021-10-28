@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+while getopts ":fv" opt; do
+  echo $@      
+  echo $opt
+done
+#shift $((OPTIND -1))

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+case $1 in
+  add)
+    if [[ ! -d ./contactdb ]]; then
+      mkdir ./contactdb
+    fi
+   
+    
+    if [[ ! -f ./contactdb/contacts ]]; then
+      touch ./contactdb/contacts
+    fi
+     
+    echo $2 $3 $4 $5 >> ./contactdb/contacts
+    echo "contact saved $2 $3 $4 $5"
+    ;;
+  remove)
+    echo remove
+    ;;
+  show)
+    shift
+    getopts ":npae"
+    echo $opts $@
+    ;;
+  *)
+    echo "usage: $0 {add|remove|show} [options]"
+    ;; 
+esac
