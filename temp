@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 
-while getopts ":fv" opt; do
-  echo $@      
-  echo $opt
+while getopts ":f:v:" opt; do
+  case $opt in
+  f) 
+    filename=$OPTARG
+    echo $filename
+    ;;
+  v) echo "option v is used";;      
+  :) echo "$OPTARG";;
+  *) echo "no such option $OPTARG";;
+  esac
 done
+#echo $@
 #shift $((OPTIND -1))
+#echo $@
