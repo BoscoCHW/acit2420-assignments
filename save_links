@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 saveLinksToFile() {
-  wget -qO- $1 | grep -oP 'href=\".*?"' | awk -F\" '{ print $2 }'> ./links
+  wget -qO- $1 | grep -oP 'href=\"http.*?"' | awk -F\" '{ print $2 }'> ./links
 }
 
 printLinksToConsole() {
-  wget -qO- $1 | grep -oP 'href=\".*?"' | awk -F\" '{ print $2 }'
+  wget -qO- $1 | grep -oP 'href=\"http.*?"' | awk -F\" '{ print $2 }'
 }
 
 if [[ "$#" -lt 1 || "$#" -gt 2 ]]; then 
