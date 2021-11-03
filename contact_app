@@ -12,30 +12,66 @@ case $1 in
     while getopts ":n:e:a:p:" opt; do
       case ${opt} in 
         n)
-          name=$OPTARG
-          ;;
+          name=$OPTARG;;
         e)
-          email=$OPTARG
+          email=$OPTARG;;
         a) 
-          address=$OPTARG
+          address=$OPTARG;;
         p)
-          phone=$OPTARG
+          phone=$OPTARG;;
         :) 
-          echo "please provide 
+          echo "Please provide an argument for $OPTARG" 1>&2
+          exit 1
+          ;;  
+        \?) 
+          echo "Invalid option: -$OPTARG" 1>&2
+          exit 1
+          ;;
       esac 
     done
-    echo $name $email $address $phone >> ./contactdb/contacts
+    if [[ $OPTIND -lt 8 ]]; then
+       echo "Please provide the name, email, address and phone number of the person"
+       exit 1
+    fi
+    shift $((OPTIND -1))
+
+    echo "$name,$email,$address,$phone" >> ./contactdb/contacts
     echo "contact saved contact for $name"
     ;;
   remove)
-    echo remove
+    shift
+    if [[ $# -ne 2 ]]; then
+      echo "Usage: $0 remove -e {email}"
+      exit 1    
+    fi
+    email=$2
+    while read line; do
+      IFS=',' read -r -a tokens <<< "$line" 
+      [[ ! ${tokens[1]} == $email ]] && echo "$line"
+    done <./contactdb/contacts > temp
+    mv temp ./contactdb/contacts
     ;;
   show)
     shift
-    getopts ":npae"
-    echo $opts $@
+    #set -x 
+    if [[ -f ./contactdb/contacts ]]; then
+      cat ./contactdb/contacts | while read line; do 
+        while getopts ":neap" opt; do
+          case $opt in
+          n) printf "name ";;
+          e) printf "email ";;
+          a) printf "address ";;
+          p) printf "phone ";;
+          esac
+        done 
+        
+      done
+    else 
+      echo "Contact database does not exist"
+    fi
     ;;
   *)
     echo "usage: $0 {add|remove|show} [options]"
+    exit 1
     ;; 
 esac
