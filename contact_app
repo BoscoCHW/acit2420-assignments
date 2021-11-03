@@ -53,18 +53,12 @@ case $1 in
     ;;
   show)
     shift
-    #set -x 
+     
+    printf "%-15s %-30s %-15s %-11s\n" "Name" "Email" "Address" "Phone"
     if [[ -f ./contactdb/contacts ]]; then
       cat ./contactdb/contacts | while read line; do 
-        while getopts ":neap" opt; do
-          case $opt in
-          n) printf "name ";;
-          e) printf "email ";;
-          a) printf "address ";;
-          p) printf "phone ";;
-          esac
-        done 
-        
+        IFS=',' read -r -a tokens <<< "$line"
+        printf "%-15s %-30s %-15s %-11s\n" "${tokens[0]}" "${tokens[1]}" "${tokens[2]}" "${tokens[3]}"
       done
     else 
       echo "Contact database does not exist"
