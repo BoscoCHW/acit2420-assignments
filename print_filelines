@@ -1,6 +1,25 @@
 #!/usr/bin/env bash
 
+if [[ $# -lt 1 ]]; then 
+  echo "Usage: $0 [-n] filename"
+  exit 1
+fi
+
+while getopts ":n" opt; do 
+  case "$opt" in
+    n) lineNum=TRUE;;
+    *) echo "Usage: $0 [-n] filename"
+       exit 1
+       ;;
+  esac
+done
+shift $((OPTIND - 1))
+
 var=1
 cat $1 | while read line; do
-  echo "$((var++)). $line"
+  if [[ $lineNum == TRUE ]]; then
+    echo "$((var++)). $line"
+  else 
+    echo "$line"
+  fi
 done
