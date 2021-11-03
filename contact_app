@@ -31,12 +31,13 @@ case $1 in
     done
     if [[ $OPTIND -lt 8 ]]; then
        echo "Please provide the name, email, address and phone number of the person"
+       echo "Usage: $0 add -n {name} -e {email} -a {address} -p {phoneNumber}"
        exit 1
     fi
     shift $((OPTIND -1))
 
     echo "$name,$email,$address,$phone" >> ./contactdb/contacts
-    echo "contact saved contact for $name"
+    echo "Contact saved contact for $name"
     ;;
   remove)
     shift
@@ -53,19 +54,51 @@ case $1 in
     ;;
   show)
     shift
-     
-    printf "%-15s %-30s %-15s %-11s\n" "Name" "Email" "Address" "Phone"
-    if [[ -f ./contactdb/contacts ]]; then
-      cat ./contactdb/contacts | while read line; do 
-        IFS=',' read -r -a tokens <<< "$line"
-        printf "%-15s %-30s %-15s %-11s\n" "${tokens[0]}" "${tokens[1]}" "${tokens[2]}" "${tokens[3]}"
-      done
-    else 
-      echo "Contact database does not exist"
-    fi
+    
+    declare -A format 
+    format[Name]="%-15s\n"
+    format[Email]="%-30s\n"
+    format[Address]="%-15s\n"
+    format[Phone]="%-11s\n"
+    format[All]="%-15s %-30s %-15s %-11s\n"
+
+    declare -A column
+    column[Name]=0
+    column[Email]=1
+    column[Address]=2
+    column[Phone]=3
+
+    if [[ ! -f ./contactdb/contacts ]]; then
+      echo "Contact database does not exist."
+      exit 1
+    fi 
+
+    case $1 in
+      -n) show='Name';;
+      -e) show='Email';;
+      -a) show='Address';;
+      -p) show='Phone';;
+      '') show='All';;
+      *) echo "Invalid option: $1"
+         exit 1
+         ;;
+    esac
+    
+    case $show in 
+      All) printf "${format[${show}]}" "Name" "Email" "Address" "Phone" ;;
+      *) printf "${format[${show}]}" $show ;;
+    esac  
+    
+    while read line; do
+      IFS=',' read -r -a tokens <<< "$line"
+        case $show in 
+          All) printf "${format[${show}]}" "${tokens[0]}" "${tokens[1]}" "${tokens[2]}" "${tokens[3]}";;
+          *) printf "${format[${show}]}" "${tokens[${column[$show]}]}" ;;
+        esac
+    done <./contactdb/contacts
     ;;
   *)
-    echo "usage: $0 {add|remove|show} [options]"
+    echo "Usage: $0 {add|remove|show} [options]"
     exit 1
     ;; 
 esac
