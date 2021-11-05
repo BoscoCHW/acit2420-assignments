@@ -1,5 +1,31 @@
 #!/usr/bin/env bash
 
+# help message
+usage() {
+cat << END
+Usage:  
+  (1) to add a contact 
+  contact_app add -n <name> -e <email> -a <address> -p <phone number>
+    
+  (2) to delete a contact  
+  contact_app remove -e <email>
+
+  (3) to show contacts
+  contact_app show [-option]    
+    -n show name only 
+    -e show email only
+    -a show address only
+    -p show phone number only
+        
+END
+}
+
+if [[ $1 == '-h' ]]; then
+  usage
+  exit 0
+fi
+
+
 case $1 in
   add)
     shift
@@ -98,7 +124,7 @@ case $1 in
     done <./contactdb/contacts
     ;;
   *)
-    echo "Usage: $0 {add|remove|show} [options]"
+    usage
     exit 1
     ;; 
 esac
