@@ -1,14 +1,24 @@
 #!/usr/bin/env bash
 
+usage() {
+cat << END
+Usage: $0 [option] <filename>
+  option:
+    -h show help message
+    -n show line number
+      
+END
+}
+
 if [[ $# -lt 1 ]]; then 
-  echo "Usage: $0 [-n] filename"
+  usage
   exit 1
 fi
 
 while getopts ":n" opt; do 
   case "$opt" in
     n) lineNum=TRUE;;
-    *) echo "Usage: $0 [-n] filename"
+    *) usage
        exit 1
        ;;
   esac
